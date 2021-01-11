@@ -10,11 +10,11 @@ class Clients:
     # connection dir property
     db_name = 'dbClients.db'
     def __init__(self, window):
-        
-        # Initializations 
+
+        # Initializations
         self.wind = window
         self.wind.title('Клиенты')
-        
+
         #create main menu
         main_menu = Menu()
         settings_menu = Menu(tearoff=0)
@@ -24,18 +24,18 @@ class Clients:
         main_menu.add_cascade(label="Файл", menu=file_menu)
         main_menu.add_cascade(label="Настройки", menu=settings_menu)
         self.wind.config(menu=main_menu)
-        
+
         #create Notebook
         self.tab_control = ttk.Notebook(self.wind)
-        self.tab1 = ttk.Frame(self.tab_control)  
+        self.tab1 = ttk.Frame(self.tab_control)
         self.tab2 = ttk.Frame(self.tab_control)
-        self.tab3 = ttk.Frame(self.tab_control)  
+        self.tab3 = ttk.Frame(self.tab_control)
         self.tab_control.add(self.tab1, text='Клиент')
-        #self.tab_control.add(self.tab3, text='Недвижимость')  
+        #self.tab_control.add(self.tab3, text='Недвижимость')
         self.tab_control.add(self.tab2, text='Статистика')
         self.tab_control.pack(expand=1, fill='both')
-        
-        # Creating a Frame Container 
+
+        # Creating a Frame Container
         frame = LabelFrame(self.tab1, text = 'Детальная информация')
         frame.grid(row = 0, column = 0, columnspan = 5, pady = 20)
 
@@ -57,10 +57,10 @@ class Clients:
         self.KindClientcombobox.current(newindex=0)
         self.KindClientcombobox.grid(row = 3, column = 1, columnspan=2)
 
-        # Button Add Product 
+        # Button Add Product
         ttk.Button(frame, text = 'Сохранить', command = self.add_client).grid(row = 4, columnspan = 3, sticky = W + E)
 
-        # Output Messages 
+        # Output Messages
         self.message = Label(self.tab1,text = '', fg = 'red')
         self.message.grid(row = 5, column = 0, columnspan = 2, sticky = W + E)
 
@@ -95,7 +95,7 @@ class Clients:
 
     # Get Products from Database
     def get_clients(self):
-        # cleaning Table 
+        # cleaning Table
         records = self.tree.get_children()
         for element in records:
             self.tree.delete(element)
@@ -105,21 +105,21 @@ class Clients:
         # filling data
         for row in db_rows:
             self.tree.insert('', 0, text = row[1], values = (row[2],self.get_queryWithParametrs('SELECT vidclienta FROM KindClient WHERE id = ?',(row[3],))[0],row[0]))
-    
+
     def get_query(self,query):
         res = []
         result_query = self.run_query(query)
         for row in result_query.fetchall():
             res.append(row[0])
         return res
-    
+
     def get_queryWithParametrs(self,query,parametrs):
         res = []
         result_query = self.run_query(query,parametrs)
         for row in result_query.fetchall():
             res.append(row[0])
         return res
-    
+
     # User Input Validation
     def validation(self):
         return len(self.FIO.get()) != 0 and len(self.NumberTelephone.get()) != 0
@@ -172,14 +172,14 @@ class Clients:
         new_FIO = Entry(self.edit_wind)
         new_FIO.grid(row = 1, column = 2)
 
-        # Old NumberTelephone 
+        # Old NumberTelephone
         Label(self.edit_wind, text = 'Номер телефона:').grid(row = 2, column = 1)
         Entry(self.edit_wind, textvariable = StringVar(self.edit_wind, value = NumberTelephone), state = 'readonly').grid(row = 2, column = 2)
         # New NumberTelephone
         Label(self.edit_wind, text = '(НОВЫЙ) номер телефона:').grid(row = 3, column = 1)
         new_NumberTelephone = Entry(self.edit_wind)
         new_NumberTelephone.grid(row = 3, column = 2)
-        
+
         # Old KindClient
         Label(self.edit_wind, text = 'Вид сделки:').grid(row = 4, column = 1)
         Entry(self.edit_wind, textvariable = StringVar(self.edit_wind, value = self.get_queryWithParametrs('SELECT vidclienta FROM KindClient WHERE id = ?',(KindClient,))[0]), state = 'readonly').grid(row = 4, column = 2)
@@ -192,7 +192,7 @@ class Clients:
 
         Button(self.edit_wind, text = 'Обновить запись', command = lambda: self.edit_records(FIO, new_FIO.get(), new_NumberTelephone.get(), self.get_queryWithParametrs('SELECT id FROM KindClient WHERE vidclienta = ?', (KindClientcomboboxEdit.get(),))[0], idClient)).grid(row = 6, column = 2, sticky = W)
         self.edit_wind.mainloop()
-        
+
     def edit_records(self, FIO, new_FIO, new_NumberTelephone, new_KindClient, idClient):
         query = 'UPDATE clients SET FIO = ?, NumberTelephone = ?, KindClient = ? WHERE id = ?'
         parameters = (new_FIO, new_NumberTelephone, new_KindClient, idClient)
@@ -200,9 +200,9 @@ class Clients:
         self.edit_wind.destroy()
         self.message['text'] = 'Запись {} обновлена успешно'.format(FIO)
         self.get_clients()
-        
+
     def barplot(self):
-    
+
         #SUM() clients for barplots
         id_list_kind_clients_barplot = self.get_query('SELECT id FROM KindClient')
         query = 'SELECT count(FIO) FROM clients WHERE KindClient = ?'
@@ -225,9 +225,9 @@ class Clients:
         plt.ylabel("Количество клиентов")
         plt.title("Зависимость количества клиентов от вида сделки")
         plt.show()
-        
+
         #number = random.randint(20, 35)
-    
+
     def center(self,win):
         """
         centers a tkinter window
@@ -244,37 +244,37 @@ class Clients:
         y = win.winfo_screenheight() // 2 - win_height // 2
         win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         win.deiconify()
-    
+
     def edit_Kind_klient(self):
         self.edit_Kind_klientFORMmain = Toplevel()
         self.edit_Kind_klientFORMmain.title("Виды клиентов")
         self.edit_Kind_klientFORMmain.resizable(False, False)
         self.edit_Kind_klientFORMmain.geometry("400x400")
         self.center(self.edit_Kind_klientFORMmain)
-        
+
         #TreeView Table Kind klient
         db_rows = self.run_query('SELECT count(id) FROM KindClient')
         for row in db_rows:
             count_id = row[0]
         self.TreeEdit_Kind_klient = ttk.Treeview(self.edit_Kind_klientFORMmain, height = 10)
         self.TreeEdit_Kind_klient["columns"] = ("#0","#1")
-        self.TreeEdit_Kind_klient.column("#1", width=150, anchor="center") 
+        self.TreeEdit_Kind_klient.column("#1", width=150, anchor="center")
         self.TreeEdit_Kind_klient.heading("#0", text="Вид Клиента")
         self.TreeEdit_Kind_klient["displaycolumns"] = ()
         self.TreeEdit_Kind_klient.grid(row = 0, column = 0, columnspan = 2)
-    
-        ttk.Button(self.edit_Kind_klientFORMmain, text = 'Удалить', command = self.delet_Kind_clients).grid(row = 1, column = 0, sticky = W + E) 
+
+        ttk.Button(self.edit_Kind_klientFORMmain, text = 'Удалить', command = self.delet_Kind_clients).grid(row = 1, column = 0, sticky = W + E)
         ttk.Button(self.edit_Kind_klientFORMmain, text = 'Редактировать', command = self.edit_Form_Kind_klients).grid(row = 2, column = 0, sticky = W + E)
         ttk.Button(self.edit_Kind_klientFORMmain, text = 'Добавить', command = lambda : self.add_Form_Kind_klients()).grid(row = 3, column = 0, sticky = W + E)
 
-        # Output Messages 
+        # Output Messages
         self.messageEdit_Kind_klient = Label(self.edit_Kind_klientFORMmain,text = '', fg = 'red')
         self.messageEdit_Kind_klient.grid(row = 4, column = 0, columnspan = 2, sticky = W + E)
-        
+
         self.get_Kind_clients()
-        
+
         self.edit_Kind_klientFORMmain.mainloop()
-        
+
     def delet_Kind_clients(self):
         self.messageEdit_Kind_klient['text'] = ''
         try:
@@ -292,9 +292,9 @@ class Clients:
             self.run_query('INSERT INTO KindClient VALUES(?, ?)', (idKind_klient,Kind_klient))
             self.messageEdit_Kind_klient['text'] = 'Вид клиента не может быть удален, есть клиенты с такой записью'
         self.update_all_table()
-    
+
     def get_Kind_clients(self):
-        # cleaning Table 
+        # cleaning Table
         records = self.TreeEdit_Kind_klient.get_children()
         for element in records:
             self.TreeEdit_Kind_klient.delete(element)
@@ -303,7 +303,7 @@ class Clients:
         # filling data
         for row in db_rows:
             self.TreeEdit_Kind_klient.insert('', 0, text = row[1], values = (row[0]))
-    
+
     def edit_Form_Kind_klients(self):
         self.messageEdit_Kind_klient['text'] = ''
         try:
@@ -342,14 +342,14 @@ class Clients:
         Entadd_Form.focus()
         btn = Button(self.add_Form_Kind_klientsF, text="ОК", command = lambda: self.add_Kind_clientsFunc(Entadd_Form.get()))
         btn.grid(row =2, column = 0)
-        self.add_Form_Kind_klientsF.mainloop() 
-    
+        self.add_Form_Kind_klientsF.mainloop()
+
     def validation_Kind_clients_Edit(self,EntEdit_Form):
         return len(EntEdit_Form) != 0
 
     def validation_Kind_clients_Add(self,Entadd_Form):
         return len(Entadd_Form) != 0
-    
+
     def add_Kind_clientsFunc(self,Entadd_Form):
         self.add_Form_Kind_klientsF.destroy()
         if self.validation_Kind_clients_Add(Entadd_Form):
@@ -363,9 +363,9 @@ class Clients:
         else:
             self.messageEdit_Kind_klient['text'] = 'Вы не заполнили необходимое поле!'
         self.update_all_table()
-        
-        
-    
+
+
+
     def edit_Kind_clientsFunc(self,EntEdit_Form):
         self.edit_Form_Kind_klientsF.destroy()
         if self.validation_Kind_clients_Edit(EntEdit_Form):
@@ -376,7 +376,7 @@ class Clients:
         else:
             self.messageEdit_Kind_klient['text'] = 'Вы не заполнили необходимое поле!'
         self.update_all_table()
-        
+
     def foreign_key_check(self):
         db_rows = self.run_query('PRAGMA foreign_key_check')
         ErorDelete =[]
@@ -386,15 +386,14 @@ class Clients:
             return True
         else:
             return False
-        
+
     def update_all_table(self):
         self.get_Kind_clients()
         self.get_clients()
         self.KindClientcombobox['value'] = self.get_query('SELECT vidclienta FROM KindClient')
-        self.KindClientcombobox.current(newindex=0)        
+        self.KindClientcombobox.current(newindex=0)
 
 if __name__ == '__main__':
     window = Tk()
     application = Clients(window)
     window.mainloop()
-
