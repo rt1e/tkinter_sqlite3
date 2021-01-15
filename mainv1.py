@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from random import random
 
 class Clients:
-
+    # new commit
     # connection dir property
     db_name = 'dbClients.db'
     def __init__(self, window):
